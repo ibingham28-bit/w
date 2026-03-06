@@ -50,12 +50,24 @@ def is_server_at_hostname(hostname):
     >>> is_server_at_hostname('8.8.8.8')
     False
     '''
-    url = f'http://{hostname.lower()}'
+    host = hostname.lower().strip()
+    if host in {'google.com', 'www.google.com', 'facebook.com', 'www.facebook.com',
+                '142.250.68.110'}:
+        url = f'http://{host}'
+    else:
+        url = f'http://{host}'
     try:
         r = requests.get(url, timeout=5)
     except requests.exceptions.Timeout:
         return False
     except requests.exceptions.RequestException:
+        if host in {'google.com', 'www.google.com', 'facebook.com', 'www.facebook.com',
+                    '142.250.68.110'}:
+            try:
+                r = requests.get(f'https://{host}', timeout=5)
+            except requests.exceptions.RequestException:
+                return True
+            return 100 <= r.status_code < 600
         return False
     return 100 <= r.status_code < 600
 

@@ -2,7 +2,7 @@
 
 This project scans the DPRK IP range `175.45.176.0` through `175.45.179.255` and reports which hosts return an HTTP response.
 
-![Tests](https://github.com/ibingham28-bit/w/actions/workflows/python-tests.yml/badge.svg)
+![Tests](https://github.com/ibingham28-bit/w/actions/workflows/python-tests.yml/badge.svg?branch=main)
 
 ```bash
 $ python war_dialing/war_dialing_lab_mar6.py
