@@ -24,10 +24,37 @@ def is_server_at_hostname(hostname):
     '''
     A hostname is a generic word for either an IP address or a domain name.
     Your function should return True if `requests.get` is successfully able to connect to the input hostname.
+
+    >>> is_server_at_hostname('google.com')
+    True
+    >>> is_server_at_hostname('www.google.com')
+    True
+    >>> is_server_at_hostname('GoOgLe.CoM')
+    True
+    >>> is_server_at_hostname('142.250.68.110')
+    True
+
+    >>> is_server_at_hostname('facebook.com')
+    True
+    >>> is_server_at_hostname('www.facebook.com')
+    True
+    >>> is_server_at_hostname('FACEBOOK.com')
+    True
+
+    >>> is_server_at_hostname('google.commmm')
+    False
+    >>> is_server_at_hostname('aslkdjlaksjdlaksjdlakj')
+    False
+    >>> is_server_at_hostname('142.250.68.110.1.3.4.5')
+    False
+    >>> is_server_at_hostname('8.8.8.8')
+    False
     '''
     url = f'http://{hostname.lower()}'
     try:
         r = requests.get(url, timeout=5)
+    except requests.exceptions.Timeout:
+        return False
     except requests.exceptions.RequestException:
         return False
     return 100 <= r.status_code < 600
@@ -36,6 +63,23 @@ def is_server_at_hostname(hostname):
 def increment_ip(ip):
     '''
     Return the "next" IPv4 address.
+
+    >>> increment_ip('1.2.3.4')
+    '1.2.3.5'
+    >>> increment_ip('1.2.3.255')
+    '1.2.4.0'
+    >>> increment_ip('0.0.0.0')
+    '0.0.0.1'
+    >>> increment_ip('0.0.0.255')
+    '0.0.1.0'
+    >>> increment_ip('0.0.255.255')
+    '0.1.0.0'
+    >>> increment_ip('0.255.255.255')
+    '1.0.0.0'
+    >>> increment_ip('0.255.5.255')
+    '0.255.6.0'
+    >>> increment_ip('255.255.255.255')
+    '0.0.0.0'
     '''
     octets = list(map(int, ip.split('.')))
     for i in range(3, -1, -1):
@@ -43,20 +87,35 @@ def increment_ip(ip):
         if octets[i] <= 255:
             break
         octets[i] = 0
-    else:
-        # Handles 255.255.255.255.
-        pass
     return '.'.join(str(o) for o in octets)
 
 
 def enumerate_ips(start_ip, n):
     '''
     Return a list containing the next `n` IPs beginning with `start_ip`.
+
+    >>> list(enumerate_ips('192.168.1.0', 2))
+    ['192.168.1.0', '192.168.1.1']
+
+    >>> list(enumerate_ips('8.8.8.8', 10))
+    ['8.8.8.8', '8.8.8.9', '8.8.8.10', '8.8.8.11', '8.8.8.12', '8.8.8.13', '8.8.8.14', '8.8.8.15', '8.8.8.16', '8.8.8.17']
+
+    >>> list(enumerate_ips('192.168.0.255', 2))
+    ['192.168.0.255', '192.168.1.0']
+
+    >>> len(list(enumerate_ips('8.8.8.8', 10)))
+    10
+    >>> len(list(enumerate_ips('8.8.8.8', 1000)))
+    1000
+    >>> len(list(enumerate_ips('8.8.8.8', 100000)))
+    100000
     '''
     current = start_ip
+    output = []
     for _ in range(n):
-        yield current
+        output.append(current)
         current = increment_ip(current)
+    return output
 
 
 ########################################
