@@ -19,4 +19,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
       - name: Run doctests
-        run: python -m doctest -v war_dialing/war_dialing_lab_mar6.py
+        run: python -m doctest -v img/war_dialing/war_dialing_lab_mar6.py
